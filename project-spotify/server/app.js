@@ -9,34 +9,14 @@ require("./db");
 // https://www.npmjs.com/package/express
 const express = require("express");
 
-// Handles the handlebars
-// https://www.npmjs.com/package/hbs
-const hbs = require("hbs");
-
-const SpotifyWebApi = require("spotify-web-api-node");
-
 const app = express();
-
-app.set("view engine", "hbs");
-app.set("views", __dirname + "/views");
-app.use(express.static(__dirname + "/public"));
-hbs.registerPartials(__dirname + "/views/partials");
-
-
-
-
 
 // ℹ️ This function is getting exported from the config folder. It runs most pieces of middleware
 require("./config")(app);
 
-const capitalize = require("./utils/capitalize");
-const projectName = "project-spotify";
-
-app.locals.appTitle = `${capitalize(projectName)} created with IronLauncher`;
-
 // 👇 Start handling routes here
-const protectedRoutes = require("./routes/protected.routes");
-app.use("/", protectedRoutes);
+const indexRoutes = require("./routes/index.routes");
+app.use("/api", indexRoutes);
 
 const authRoutes = require("./routes/auth.routes");
 app.use("/auth", authRoutes);
