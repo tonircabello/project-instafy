@@ -43,7 +43,7 @@ router.get('/albums/:artistId', (req, res) => {
   spotifyApi.getArtistAlbums(artistId)
     .then(data => {
       const albums = data.body.items;
-      res.render('/Protected/albums.hbs', { artistId, albums });
+      res.render('Protected/albums.hbs', { artistId, albums });
     })
     .catch(err => console.log('The error while searching albums occurred: ', err));
 });
