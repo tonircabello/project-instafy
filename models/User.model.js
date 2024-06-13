@@ -40,7 +40,7 @@ const userSchema = new Schema(
     profilePicture: {
       type: String,
       //default: ""
-      required: true,
+      required: false,
     },
   },
   // mirar bien el type para profilePicture
