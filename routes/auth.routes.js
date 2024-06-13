@@ -40,7 +40,10 @@ router.post("/signup", isLoggedOut, (req, res) => {
     });
 
     return;
+
+    
   }
+
 
   //   ! This regular expression checks password for special characters and minimum length
   /*
