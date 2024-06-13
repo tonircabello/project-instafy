@@ -21,8 +21,7 @@ app.set("view engine", "hbs");
 app.set("views", __dirname + "/views");
 app.use(express.static(__dirname + "/public"));
 hbs.registerPartials(__dirname + "/views/partials");
-// Rota para álbuns
-app.use('/albums', require('./routes/protected.routes'));
+
 
 
 
@@ -42,6 +41,9 @@ app.use("/", protectedRoutes);
 
 const authRoutes = require("./routes/auth.routes");
 app.use("/auth", authRoutes);
+
+// Albums Route
+app.use('/albums', require('./routes/protected.routes'));
 
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require("./error-handling")(app);
