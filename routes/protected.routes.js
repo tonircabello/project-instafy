@@ -21,9 +21,17 @@ spotifyApi
 
 /* GET home page */
 router.get("/", (req, res, next) => {
-  res.render('Protected/search')
+  spotifyApi
+    .searchArtists("love")
+    .then((data) => {
+      console.log("The received data from the API: ", data.body);
+      res.render(('Protected/search'), { artists: data.body.artists.items });
+    })
+    .catch((err) =>
+      console.log("The error while searching artists occurred: ", err)
+    );
 });
-
+  
 router.get("/artist-search", (req, res) => {
   const search = req.query.artist;
   spotifyApi
