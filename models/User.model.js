@@ -4,7 +4,7 @@ const userSchema = new Schema(
   {
     username: {
       type: String,
-      required: false,
+      required: true,
       unique: true,
       trim: true,
     },
@@ -30,6 +30,16 @@ const userSchema = new Schema(
 
     privateUser: {
       type: Boolean,
+      default: false,
+      required: true,
+    },
+    sessionToken:{
+      type: String,
+      //required: true,
+    },
+    profilePicture: {
+      type: String,
+      //default: ""
       required: true,
     },
   },

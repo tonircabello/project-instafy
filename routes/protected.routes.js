@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const SpotifyWebApi = require("spotify-web-api-node");
 const app = require('../app');
+const isLoggedOut = require("../middleware/isLoggedOut");
+const isLoggedIn = require("../middleware/isLoggedIn");
+
 
 
 // setting the spotify-api goes here:
@@ -21,7 +24,7 @@ spotifyApi
 
 
 /* GET home page */
-router.get("/", (req, res, next) => {
+router.get("/",isLoggedIn, (req, res, next) => {
   spotifyApi
     .searchArtists("love")
     .then((data) => {
