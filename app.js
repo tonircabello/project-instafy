@@ -21,6 +21,8 @@ app.set("view engine", "hbs");
 app.set("views", __dirname + "/views");
 app.use(express.static(__dirname + "/public"));
 hbs.registerPartials(__dirname + "/views/partials");
+// Rota para álbuns
+app.use('/albums', require('./routes/protected.routes'));
 
 
 
