@@ -42,6 +42,14 @@ const userSchema = new Schema(
       //default: ""
       required: false,
     },
+    friends:{
+      type: [String],
+      required: false,
+    },
+    publications:{
+      type:[String],
+      required: false,
+    },
   },
   // mirar bien el type para profilePicture
   {
