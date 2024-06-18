@@ -25,7 +25,7 @@ const userSchema = new Schema(
     },
     roles: {
       type: [String],
-      default: ['user'], 
+      default: ["user"],
     },
 
     privateUser: {
@@ -33,7 +33,7 @@ const userSchema = new Schema(
       default: false,
       required: true,
     },
-    sessionToken:{
+    sessionToken: {
       type: String,
       //required: true,
     },
@@ -42,6 +42,8 @@ const userSchema = new Schema(
       //default: ""
       required: false,
     },
+    //publications
+    publications: [{type: [Schema.Types.ObjectId], ref: "Publication"}]
   },
   // mirar bien el type para profilePicture
   {
