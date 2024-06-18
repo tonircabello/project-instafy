@@ -51,9 +51,7 @@ const userSchema = new Schema(
       required: false,
   },
   // mirar bien el type para profilePicture
-  {
-    timestamps: true,
-  }
+}
 );
 
 const User = model("User", userSchema);
