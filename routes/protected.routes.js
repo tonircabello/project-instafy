@@ -1,11 +1,10 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const SpotifyWebApi = require("spotify-web-api-node");
-const app = require('../app');
+const app = require("../app");
+const Publication = require("../models/Publication.model");
 const isLoggedOut = require("../middleware/isLoggedOut");
 const isLoggedIn = require("../middleware/isLoggedIn");
-
-
 
 // setting the spotify-api goes here:
 const spotifyApi = new SpotifyWebApi({
@@ -15,33 +14,35 @@ const spotifyApi = new SpotifyWebApi({
 
 // Retrieve an access token
 spotifyApi
-.clientCredentialsGrant()
-.then((data) => spotifyApi.setAccessToken(data.body["access_token"]))
-.catch((error) =>
-  console.log("Something went wrong when retrieving an access token", error)
-);
-
-
+  .clientCredentialsGrant()
+  .then((data) => spotifyApi.setAccessToken(data.body["access_token"]))
+  .catch((error) =>
+    console.log("Something went wrong when retrieving an access token", error)
+  );
 
 /* GET home page */
-router.get("/",isLoggedIn, (req, res, next) => {
-  spotifyApi
-    .searchArtists("love")
-    .then((data) => {
-      console.log("The received data from the API: ", data.body);
-      res.render(('Protected/search'), { artists: data.body.artists.items });
-    })
-    .catch((err) =>
-      console.log("The error while searching artists occurred: ", err)
-    );
+router.get("/", isLoggedIn, (req, res, next) => {
+  Publication.find().then((userPublications) => {
+    spotifyApi
+      .searchArtists("love")
+      .then((data) => {
+        res.render("Protected/search", {
+          artists: data.body.artists.items,
+          publications: userPublications,
+        });
+      })
+      .catch((err) =>
+        console.log("The error while searching artists occurred: ", err)
+      );
+  });
 });
-  
-router.get("/artist-search", (req, res) => {
+
+router.get("/artist-search", isLoggedIn, (req, res) => {
   const search = req.query.artist;
   spotifyApi
     .searchArtists(search)
     .then((data) => {
-      console.log("The received data from the API: ", data.body);
+      console.log(data.body.artists.items)  
       res.render("Protected/artists.hbs", { artists: data.body.artists.items });
     })
     .catch((err) =>
@@ -49,25 +50,50 @@ router.get("/artist-search", (req, res) => {
     );
 });
 
-router.get('/albums/:artistId', (req, res) => {
+router.get("/albums/:artistId", isLoggedIn, (req, res) => {
   const artistId = req.params.artistId;
-  spotifyApi.getArtistAlbums(artistId)
-    .then(data => {
+  spotifyApi
+    .getArtistAlbums(artistId)
+    .then((data) => {
       const albums = data.body.items;
-      res.render('Protected/albums.hbs', { artistId, albums });
+      res.render("Protected/albums.hbs", { artistId, albums });
     })
-    .catch(err => console.log('The error while searching albums occurred: ', err));
+    .catch((err) =>
+      console.log("The error while searching albums occurred: ", err)
+    );
 });
 
-router.get('/tracks/:albumId', (req, res) => {
+router.get("/tracks/:albumId", isLoggedIn, (req, res) => {
   const albumId = req.params.albumId;
-  spotifyApi.getAlbumTracks(albumId)
-    .then(data => {
+  spotifyApi
+    .getAlbumTracks(albumId)
+    .then((data) => {
       const tracks = data.body.items;
-      res.render('Protected/tracks.hbs', { tracks });
+      res.render("Protected/tracks.hbs", { tracks });
     })
-    .catch(err => console.log('The error while searching tracks occurred: ', err));
+    .catch((err) =>
+      console.log("The error while searching tracks occurred: ", err)
+    );
 });
 
+router.get("/create-publication", isLoggedIn, (req, res) => {
+  res.render("Protected/create-publication.hbs");
+});
+
+router.post("/create-publication", isLoggedIn, (req, res) => {
+console.log(req.body);
+  const newPublication = {
+    title: req.body.title,
+    content: req.body.content,
+    tags: req.body.tags,
+    about: req.body.about,
+    user: req.session.currentUser
+  };
+  
+  Publication.create(newPublication).then((data) => {
+    //req.session.publications.push(newPublication);
+    res.redirect("/");
+  });
+});
 
 module.exports = router;
