@@ -13,7 +13,6 @@ const publicationSchema = new Schema(
     },
     user: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
       required: true,
     },
     tags: [
@@ -22,14 +21,9 @@ const publicationSchema = new Schema(
         trim: true,
       }
     ],
-    //quizá lo siguiente podríamos ahorrarlo si directamente viene en la info que recibamos de la api , me refiero a song y artist
-    song: {
-      type: String,
-      required: false,//podría ser true
-    },
-    artist: {
-        type: String,
-        required: false
+    about:{
+      type:String,
+      required: false,
     },
     publishedAt: {
       type: Date,
