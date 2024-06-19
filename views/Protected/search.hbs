@@ -41,4 +41,13 @@
             {{/if}}
         {{/each}}
     </div>
+      <div id="artist-list">
+        {{#each artists}}
+        <div class="artist">
+            <img src="{{this.images.[0].url}}" alt="{{this.name}}" style="width:100px; height:100px;">
+            <h2>{{this.name}}</h2>
+            <p>Popularidade: {{this.popularity}}</p>
+        </div>
+        {{/each}}
+    </div>
   </div>
