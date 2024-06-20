@@ -24,10 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const button = document.getElementById("search-publication-button");
-
+  fetchAccessToken();
   button.addEventListener("click", function (event) {
     event.preventDefault();
-    fetchAccessToken();
     const artistsSearched = document.getElementById("search");
     const formSelect = document.getElementById("publication")
     const optionSelected = document.getElementById("optionSelected").value;
