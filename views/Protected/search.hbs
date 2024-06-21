@@ -2,7 +2,7 @@
   {{>navbar}}
   <div class="gap-1 flex">
     <div class="flex-1 border-2 border-gray-600 ">
-      <p class="text-white text-center mt-2 font-bold">Your Publications:</p>
+      <h3 class="text-xl font-bold text-violet-700 dark:text-stone-950 text-center">Your Publications:</h3>
       <a href="/create-publication"
         class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800">
         <span
@@ -11,17 +11,19 @@
           Create a New Publication
         </span></a>
       </button>
-      {{#if publications}}
-        {{#each publications}}
-          <p class="text-white">{{title}}</p>
-        {{/each}}
-      {{/if}}
+{{#if publications}}
+  <ul class="text-rigth">
+    {{#each publications}}
+      <li class="text-violet-400 text-sm my-2 font-extrabold dark:text-stone-950">{{title}}</li>
+    {{/each}}
+  </ul>
+{{/if}}
     </div>
     <div class="flex-1 border-2 border-gray-600 ">
-      <p class="text-white text-center mt-2 font-bold">For You Page</p>
+      <h3 class="text-xl font-bold text-violet-700 dark:text-stone-950 text-center">For You Page</h3>
     </div>
     <div class="flex-1 border-2 border-gray-600 ">
-      <p class="text-white text-center mt-2 font-bold">Artists You May Like:</p>  
+      <h3 class="text-xl font-bold text-violet-700 dark:text-stone-950 text-center">Artist You May Like:</h3> 
       {{#each artists}}
        {{#if images}}
             <div
