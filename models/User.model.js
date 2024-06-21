@@ -47,10 +47,10 @@ const userSchema = new Schema(
     publications: [{type: [Schema.Types.ObjectId], ref: "Publication"}],
   
     friends:{
-      type: [String],
+      type: [{type: [Schema.Types.ObjectId], ref: "User"}],
       required: false,
   },
-  // mirar bien el type para profilePicture
+
   
   
   }
