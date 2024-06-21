@@ -2,7 +2,7 @@
   {{>navbar}}
   <div class="gap-1 flex">
     <div class="flex-1 border-2 border-gray-600 ">
-      <h3 class="text-xl font-bold text-violet-700 text-center">Your Publications:</h3>
+      <h3 class="text-xl font-bold text-violet-700 dark:text-stone-950 text-center">Your Publications:</h3>
       <a href="/create-publication"
         class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800">
         <span
@@ -20,10 +20,10 @@
 {{/if}}
     </div>
     <div class="flex-1 border-2 border-gray-600 ">
-      <h3 class="text-xl font-bold text-violet-700 text-center">For You Page</h3>
+      <h3 class="text-xl font-bold text-violet-700 dark:text-stone-950 text-center">For You Page</h3>
     </div>
     <div class="flex-1 border-2 border-gray-600 ">
-      <h3 class="text-xl font-bold text-violet-700 text-center">Artist You May Like:</h3> 
+      <h3 class="text-xl font-bold text-violet-700 dark:text-stone-950 text-center">Artist You May Like:</h3> 
       {{#each artists}}
        {{#if images}}
             <div
@@ -41,6 +41,15 @@
             </div>
                 </div>
             {{/if}}
+        {{/each}}
+    </div>
+      <div id="artist-list">
+        {{#each artists}}
+        <div class="artist">
+            <img src="{{this.images.[0].url}}" alt="{{this.name}}" style="width:100px; height:100px;">
+            <h2>{{this.name}}</h2>
+            <p>Popularidade: {{this.popularity}}</p>
+        </div>
         {{/each}}
     </div>
   </div>

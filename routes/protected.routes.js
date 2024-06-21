@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const SpotifyWebApi = require("spotify-web-api-node");
 const app = require("../app");
+const User = require("../models/User.model");
 const Publication = require("../models/Publication.model");
 const isLoggedOut = require("../middleware/isLoggedOut");
 const isLoggedIn = require("../middleware/isLoggedIn");
@@ -20,6 +21,46 @@ spotifyApi
     console.log("Something went wrong when retrieving an access token", error)
   );
 
+    // Get Recommendations Based on Seeds Función para obtener recomendaciones de artistas
+async function getRecommendedArtists() {
+  try {
+    const data = await spotifyApi.getRecommendations({
+      min_energy: 0.4,
+      seed_artists: ['6mfK6Q2tzLMEchAr0e9Uzu', '4DYFVNKZ1uixa6SQTvzQwJ'], // IDs de artistas para referência
+      min_popularity: 50
+    });
+    return data.body.tracks.map(track => track.artists[0]);
+  } catch (err) {
+    console.error("Something's gone wrong!", err);
+    return [];
+  }
+}
+
+// Função para obter recomendações de artistas
+async function getRecommendedArtists() {
+  try {
+    const data = await spotifyApi.getRecommendations({
+      seed_artists: ['6mfK6Q2tzLMEchAr0e9Uzu', '4DYFVNKZ1uixa6SQTvzQwJ'], // IDs de artistas que você gosta
+      seed_genres: ['pop', 'rock'], // Gêneros de música que você gosta
+      min_popularity: 50,
+      limit: 10 // Limite de recomendações
+    });
+    return data.body.tracks.map(track => track.artists[0]);
+  } catch (err) {
+    console.error("Erro ao obter recomendações de artistas!", err);
+    return [];
+  }
+}
+/*
+// Get available genre seeds
+spotifyApi.getAvailableGenreSeeds()
+.then(function(data) {
+let genreSeeds = data.body;
+console.log(genreSeeds);
+}, function(err) {
+console.log('Something went wrong!', err);
+}); */
+
 /* GET home page */
 router.get("/", isLoggedIn, (req, res, next) => {
   Publication.find().then((userPublications) => {
@@ -36,13 +77,31 @@ router.get("/", isLoggedIn, (req, res, next) => {
       );
   });
 });
+router.get('/',isLoggedIn, async (req, res) => {
+  const artists = await getRecommendedArtists();
+  res.render('Protected/search', { artists });
+});
+router.get("/", isLoggedIn, async (req, res, next) => {
+  try {
+    const userPublications = await Publication.find(); // Assumindo que Publication é um modelo Mongoose ou similar
+    const recommendedArtists = await getRecommendedArtists();
+
+    res.render("Protected/search", {
+      artists: recommendedArtists,
+      publications: userPublications,
+    });
+  } catch (err) {
+    console.error("Erro ao obter dados para a página inicial", err);
+    res.status(500).send("Erro ao carregar a página");
+  }
+});
 
 router.get("/artist-search", isLoggedIn, (req, res) => {
   const search = req.query.artist;
   spotifyApi
     .searchArtists(search)
     .then((data) => {
-      console.log(data.body.artists.items)  
+      console.log(data.body.artists.items);
       res.render("Protected/artists.hbs", { artists: data.body.artists.items });
     })
     .catch((err) =>
@@ -81,19 +140,26 @@ router.get("/create-publication", isLoggedIn, (req, res) => {
 });
 
 router.post("/create-publication", isLoggedIn, (req, res) => {
-console.log(req.body);
   const newPublication = {
     title: req.body.title,
     content: req.body.content,
     tags: req.body.tags,
     about: req.body.about,
-    user: req.session.currentUser
+    user: req.session.currentUser,
   };
-  
+
   Publication.create(newPublication).then((data) => {
-    //req.session.publications.push(newPublication);
-    res.redirect("/");
+    // Retrieve the user from the database
+    User.findById(req.session.currentUser._id).then((user) => {
+      // Update the user document by pushing the new publication to the publications array
+      user.publications.push(data);
+      user.save().then(() => {
+        res.redirect("/");
+      });
+    });
   });
 });
+
+
 
 module.exports = router;

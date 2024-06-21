@@ -36,7 +36,7 @@ const projectName = "project-spotify";
 app.locals.appTitle = `${capitalize(projectName)} created with IronLauncher`;
 
 // 👇 Start handling routes here
-const protectedRoutes = require("./routes/protected.routes");
+const protectedRoutes = require ("./routes/protected.routes");
 app.use("/", protectedRoutes);
 
 const authRoutes = require("./routes/auth.routes");
