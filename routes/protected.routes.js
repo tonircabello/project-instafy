@@ -22,7 +22,7 @@ spotifyApi
   );
 
     // Get Recommendations Based on Seeds Función para obtener recomendaciones de artistas
-async function getRecommendedArtists() {
+/*async function getRecommendedArtists() {
   try {
     const data = await spotifyApi.getRecommendations({
       min_energy: 0.4,
@@ -35,9 +35,9 @@ async function getRecommendedArtists() {
     return [];
   }
 }
-
+*/
 // Função para obter recomendações de artistas
-async function getRecommendedArtists() {
+/*async function getRecommendedArtists() {
   try {
     const data = await spotifyApi.getRecommendations({
       seed_artists: ['6mfK6Q2tzLMEchAr0e9Uzu', '4DYFVNKZ1uixa6SQTvzQwJ'], // IDs de artistas que você gosta
@@ -77,11 +77,11 @@ router.get("/", isLoggedIn, (req, res, next) => {
       );
   });
 });
-router.get('/',isLoggedIn, async (req, res) => {
+/*router.get('/',isLoggedIn, async (req, res) => {
   const artists = await getRecommendedArtists();
   res.render('Protected/search', { artists });
-});
-router.get("/", isLoggedIn, async (req, res, next) => {
+});*/
+/*router.get("/", isLoggedIn, async (req, res, next) => {
   try {
     const userPublications = await Publication.find(); // Assumindo que Publication é um modelo Mongoose ou similar
     const recommendedArtists = await getRecommendedArtists();
@@ -95,7 +95,7 @@ router.get("/", isLoggedIn, async (req, res, next) => {
     res.status(500).send("Erro ao carregar a página");
   }
 });
-
+*/
 router.get("/artist-search", isLoggedIn, (req, res) => {
   const search = req.query.artist;
   spotifyApi
