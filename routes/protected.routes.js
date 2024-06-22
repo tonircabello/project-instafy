@@ -63,13 +63,19 @@ console.log('Something went wrong!', err);
 
 /* GET home page */
 router.get("/", isLoggedIn, (req, res, next) => {
-  Publication.find().then((userPublications) => {
-    spotifyApi
-      .searchArtists("love")
-      .then((data) => {
-        res.render("Protected/search", {
-          artists: data.body.artists.items,
-          publications: userPublications,
+  User.findById(req.session.currentUser._id)
+    .populate({ path: "publications" })
+    .then((user) => {
+      spotifyApi
+        .searchArtists("love")
+        .then((data) => {
+          res.render("Protected/search", {
+            artists: data.body.artists.items,
+            publications: user.publications,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
         });
       })
       .catch((err) =>
@@ -149,9 +155,7 @@ router.post("/create-publication", isLoggedIn, (req, res) => {
   };
 
   Publication.create(newPublication).then((data) => {
-    // Retrieve the user from the database
     User.findById(req.session.currentUser._id).then((user) => {
-      // Update the user document by pushing the new publication to the publications array
       user.publications.push(data);
       user.save().then(() => {
         res.redirect("/");
@@ -159,6 +163,16 @@ router.post("/create-publication", isLoggedIn, (req, res) => {
     });
   });
 });
+
+
+router.get("/publication-details/:id", isLoggedIn, (req, res) => {
+  const publicationId = req.params.id;
+  Publication.findById(publicationId).then((publication) => {
+    console.log(publication);
+    res.render("Protected/publication-details.hbs", {publication: publication });
+  });
+});
+
 
 
 
