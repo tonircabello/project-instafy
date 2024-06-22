@@ -32,7 +32,24 @@ router.get("/", isLoggedIn, (req, res, next) => {
         min_popularity: 50,
         limit: 20 
       })
+  User.findById(req.session.currentUser._id)
+    .populate({ path: "publications" })
+    .then((user) => {
+      spotifyApi
+      .getRecommendations({
+        seed_genres: ['pop', 'rock'], 
+        min_popularity: 50,
+        limit: 20 
+      })
       .then((data) => {
+        const albums1 = data.body.tracks;
+          res.render("Protected/search", {
+            albums: albums1,
+            publications: user.publications,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
         const albums1 = data.body.tracks;
           res.render("Protected/search", {
             albums: albums1,
@@ -47,6 +64,7 @@ router.get("/", isLoggedIn, (req, res, next) => {
         console.log("The error while searching artists occurred: ", err)
       );
   });
+
 
 
 router.get("/artist-search", isLoggedIn, (req, res) => {
@@ -111,6 +129,7 @@ router.post("/create-publication", isLoggedIn, (req, res) => {
   });
 });
 
+
 router.get("/publication-details/:id", isLoggedIn, (req, res) => {
   const publicationId = req.params.id;
   Publication.findById(publicationId).then((publication) => {
@@ -118,5 +137,8 @@ router.get("/publication-details/:id", isLoggedIn, (req, res) => {
     res.render("Protected/publication-details.hbs", {publication: publication });
   });
 });
+
+
+
 
 module.exports = router;
