@@ -37,7 +37,29 @@ router.get("/", isLoggedIn, (req, res, next) => {
         .catch((err) => {
           console.log(err);
         });
+      })
+      .catch((err) =>
+        console.log("The error while searching artists occurred: ", err)
+      );
+  });
+
+router.get('/',isLoggedIn, async (req, res) => {
+  const artists = await getRecommendedArtists();
+  res.render('Protected/search', { artists });
+});
+router.get("/", isLoggedIn, async (req, res, next) => {
+  try {
+    const userPublications = await Publication.find(); // Assumindo que Publication é um modelo Mongoose ou similar
+    const recommendedArtists = await getRecommendedArtists();
+
+    res.render("Protected/search", {
+      artists: recommendedArtists,
+      publications: userPublications,
     });
+  } catch (err) {
+    console.error("Erro ao obter dados para a página inicial", err);
+    res.status(500).send("Erro ao carregar a página");
+  }
 });
 
 router.get("/artist-search", isLoggedIn, (req, res) => {
