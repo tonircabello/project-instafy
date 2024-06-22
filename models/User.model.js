@@ -42,16 +42,14 @@ const userSchema = new Schema({
     required: false,
   },
 
-  //publications
   publications: {
     type: [Schema.Types.ObjectId],
     ref: "Publication",
     default: [],
   },
-
-  friends: {
-    type: [String],
-    required: false,
+    friends:{
+      type: [{type: [Schema.Types.ObjectId], ref: "User"}],
+      required: false,
   },
   // mirar bien el type para profilePicture
   genres: {

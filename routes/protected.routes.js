@@ -32,7 +32,24 @@ router.get("/", isLoggedIn, (req, res, next) => {
         min_popularity: 50,
         limit: 20 
       })
+  User.findById(req.session.currentUser._id)
+    .populate({ path: "publications" })
+    .then((user) => {
+      spotifyApi
+      .getRecommendations({
+        seed_genres: ['pop', 'rock'], 
+        min_popularity: 50,
+        limit: 20 
+      })
       .then((data) => {
+        const albums1 = data.body.tracks;
+          res.render("Protected/search", {
+            albums: albums1,
+            publications: user.publications,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
         const albums1 = data.body.tracks;
           res.render("Protected/search", {
             albums: albums1,
@@ -49,25 +66,6 @@ router.get("/", isLoggedIn, (req, res, next) => {
   });
 
 
-/*router.get('/',isLoggedIn, async (req, res) => {
-  const artists = await getRecommendedArtists();
-  res.render('Protected/search', { artists });
-});
-router.get("/", isLoggedIn, async (req, res, next) => {
-  try {
-    const userPublications = await Publication.find(); // Assumindo que Publication é um modelo Mongoose ou similar
-    const recommendedArtists = await getRecommendedArtists();
-
-    res.render("Protected/search", {
-      artists: recommendedArtists,
-      publications: userPublications,
-    });
-  } catch (err) {
-    console.error("Erro ao obter dados para a página inicial", err);
-    res.status(500).send("Erro ao carregar a página");
-  }
-});
-*/
 router.get("/artist-search", isLoggedIn, (req, res) => {
   const search = req.query.artist;
   spotifyApi
@@ -121,9 +119,7 @@ router.post("/create-publication", isLoggedIn, (req, res) => {
   };
 
   Publication.create(newPublication).then((data) => {
-    // Retrieve the user from the database
     User.findById(req.session.currentUser._id).then((user) => {
-      // Update the user document by pushing the new publication to the publications array
       user.publications.push(data);
       user.save().then(() => {
         res.redirect("/");
@@ -131,4 +127,17 @@ router.post("/create-publication", isLoggedIn, (req, res) => {
     });
   });
 });
+
+
+router.get("/publication-details/:id", isLoggedIn, (req, res) => {
+  const publicationId = req.params.id;
+  Publication.findById(publicationId).then((publication) => {
+    console.log(publication);
+    res.render("Protected/publication-details.hbs", {publication: publication });
+  });
+});
+
+
+
+
 module.exports = router;
