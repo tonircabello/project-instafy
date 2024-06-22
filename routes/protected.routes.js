@@ -27,18 +27,27 @@ router.get("/", isLoggedIn, (req, res, next) => {
     .populate({ path: "publications" })
     .then((user) => {
       spotifyApi
-        .searchArtists("love")
-        .then((data) => {
+      .getRecommendations({
+        seed_genres: ['pop', 'rock'], 
+        min_popularity: 50,
+        limit: 20 
+      })
+      .then((data) => {
+        const albums1 = data.body.tracks;
           res.render("Protected/search", {
-            artists: data.body.artists.items,
+            albums: albums1,
             publications: user.publications,
           });
         })
         .catch((err) => {
           console.log(err);
         });
-    });
-});
+      })
+      .catch((err) =>
+        console.log("The error while searching artists occurred: ", err)
+      );
+  });
+
 
 router.get("/artist-search", isLoggedIn, (req, res) => {
   const search = req.query.artist;
