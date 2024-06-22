@@ -42,29 +42,17 @@ const userSchema = new Schema({
     required: false,
   },
 
-  //publications
   publications: {
     type: [Schema.Types.ObjectId],
     ref: "Publication",
     default: [],
   },
-
-
-    publications: [{type: [Schema.Types.ObjectId], ref: "Publication"}],
-  
     friends:{
       type: [{type: [Schema.Types.ObjectId], ref: "User"}],
       required: false,
   },
-
-  
-  
   }
 );
-
-
-
-
 const User = model("User", userSchema);
 
 module.exports = User;
