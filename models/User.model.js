@@ -49,12 +49,21 @@ const userSchema = new Schema({
     default: [],
   },
 
-  friends: {
-    type: [String],
-    required: false,
+
+    publications: [{type: [Schema.Types.ObjectId], ref: "Publication"}],
+  
+    friends:{
+      type: [{type: [Schema.Types.ObjectId], ref: "User"}],
+      required: false,
   },
-  // mirar bien el type para profilePicture
-});
+
+  
+  
+  }
+);
+
+
+
 
 const User = model("User", userSchema);
 

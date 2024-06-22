@@ -21,6 +21,46 @@ spotifyApi
     console.log("Something went wrong when retrieving an access token", error)
   );
 
+    // Get Recommendations Based on Seeds Función para obtener recomendaciones de artistas
+async function getRecommendedArtists() {
+  try {
+    const data = await spotifyApi.getRecommendations({
+      min_energy: 0.4,
+      seed_artists: ['6mfK6Q2tzLMEchAr0e9Uzu', '4DYFVNKZ1uixa6SQTvzQwJ'], // IDs de artistas para referência
+      min_popularity: 50
+    });
+    return data.body.tracks.map(track => track.artists[0]);
+  } catch (err) {
+    console.error("Something's gone wrong!", err);
+    return [];
+  }
+}
+
+// Função para obter recomendações de artistas
+async function getRecommendedArtists() {
+  try {
+    const data = await spotifyApi.getRecommendations({
+      seed_artists: ['6mfK6Q2tzLMEchAr0e9Uzu', '4DYFVNKZ1uixa6SQTvzQwJ'], // IDs de artistas que você gosta
+      seed_genres: ['pop', 'rock'], // Gêneros de música que você gosta
+      min_popularity: 50,
+      limit: 10 // Limite de recomendações
+    });
+    return data.body.tracks.map(track => track.artists[0]);
+  } catch (err) {
+    console.error("Erro ao obter recomendações de artistas!", err);
+    return [];
+  }
+}
+/*
+// Get available genre seeds
+spotifyApi.getAvailableGenreSeeds()
+.then(function(data) {
+let genreSeeds = data.body;
+console.log(genreSeeds);
+}, function(err) {
+console.log('Something went wrong!', err);
+}); */
+
 /* GET home page */
 router.get("/", isLoggedIn, (req, res, next) => {
   User.findById(req.session.currentUser._id)
@@ -37,7 +77,29 @@ router.get("/", isLoggedIn, (req, res, next) => {
         .catch((err) => {
           console.log(err);
         });
+      })
+      .catch((err) =>
+        console.log("The error while searching artists occurred: ", err)
+      );
+  });
+});
+router.get('/',isLoggedIn, async (req, res) => {
+  const artists = await getRecommendedArtists();
+  res.render('Protected/search', { artists });
+});
+router.get("/", isLoggedIn, async (req, res, next) => {
+  try {
+    const userPublications = await Publication.find(); // Assumindo que Publication é um modelo Mongoose ou similar
+    const recommendedArtists = await getRecommendedArtists();
+
+    res.render("Protected/search", {
+      artists: recommendedArtists,
+      publications: userPublications,
     });
+  } catch (err) {
+    console.error("Erro ao obter dados para a página inicial", err);
+    res.status(500).send("Erro ao carregar a página");
+  }
 });
 
 router.get("/artist-search", isLoggedIn, (req, res) => {
@@ -102,6 +164,7 @@ router.post("/create-publication", isLoggedIn, (req, res) => {
   });
 });
 
+
 router.get("/publication-details/:id", isLoggedIn, (req, res) => {
   const publicationId = req.params.id;
   Publication.findById(publicationId).then((publication) => {
@@ -109,5 +172,8 @@ router.get("/publication-details/:id", isLoggedIn, (req, res) => {
     res.render("Protected/publication-details.hbs", {publication: publication });
   });
 });
+
+
+
 
 module.exports = router;
