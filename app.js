@@ -12,6 +12,9 @@ const express = require("express");
 // Handles the handlebars
 // https://www.npmjs.com/package/hbs
 const hbs = require("hbs");
+hbs.registerHelper('isEqual', function(value1, value2, options) {
+    return (value1 === value2) ? options.fn(this) : options.inverse(this);
+});
 
 const SpotifyWebApi = require("spotify-web-api-node");
 
