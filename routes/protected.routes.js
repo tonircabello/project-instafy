@@ -28,9 +28,9 @@ router.get("/", isLoggedIn, (req, res, next) => {
     .then((user) => {
       spotifyApi
         .getRecommendations({
-          seed_genres: ['pop', 'rock'], 
+          seed_genres: ["pop", "rock"],
           min_popularity: 50,
-          limit: 20 
+          limit: 20,
         })
         .then((data) => {
           const albums1 = data.body.tracks;
@@ -101,9 +101,10 @@ router.post("/create-publication", isLoggedIn, (req, res) => {
     content: req.body.content,
     tags: req.body.tags,
     about: req.body.about,
+    aboutType: req.body.aboutType,
     user: req.session.currentUser,
   };
-
+  console.log(req.body);
   Publication.create(newPublication).then((data) => {
     User.findById(req.session.currentUser._id).then((user) => {
       user.publications.push(data);
@@ -117,9 +118,28 @@ router.post("/create-publication", isLoggedIn, (req, res) => {
 router.get("/publication-details/:id", isLoggedIn, (req, res) => {
   const publicationId = req.params.id;
   Publication.findById(publicationId).then((publication) => {
-    console.log(publication);
-    res.render("Protected/publication-details.hbs", { publication: publication });
+    if (publication.aboutType === "Ar") {
+      spotifyApi.getArtist(publication.about).then((data) => {
+        res.render("Protected/publication-details.hbs", {
+          publication: publication,
+          about: data.body,
+        });
+      });
+    } else if (publication.aboutType === "Al") {
+      spotifyApi.getAlbum(publication.about).then((data) => {
+        res.render("Protected/publication-details.hbs", {
+          publication: publication,
+          about: data.body,
+        });
+      });
+    } else if (publication.aboutType === "Tr") {
+      spotifyApi.getTrack(publication.about).then((data) => {
+        res.render("Protected/publication-song-details", {
+          publication: publication,
+          about: data.body,
+        });
+      });
+    }
   });
 });
-
 module.exports = router;
