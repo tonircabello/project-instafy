@@ -7,6 +7,7 @@ const Publication = require("../models/Publication.model");
 const isLoggedOut = require("../middleware/isLoggedOut");
 const isLoggedIn = require("../middleware/isLoggedIn");
 
+
 // setting the spotify-api goes here:
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.CLIENT_ID,
@@ -26,31 +27,24 @@ router.get("/", isLoggedIn, (req, res, next) => {
   User.findById(req.session.currentUser._id)
     .populate({ path: "publications" })
     .then((user) => {
-      spotifyApi
-      .getRecommendations({
-        seed_genres: ['pop', 'rock'], 
-        min_popularity: 50,
-        limit: 20 
-      })
-  User.findById(req.session.currentUser._id)
-    .populate({ path: "publications" })
-    .then((user) => {
-      spotifyApi
-      .getRecommendations({
-        seed_genres: ['pop', 'rock'], 
+      const userGenres = user.genres;
+      const seedGenres = userGenres.length > 0 ? userGenres : ["reggae"];
+      spotifyApi.getRecommendations({
+        seed_genres: seedGenres, 
         min_popularity: 50,
         limit: 20 
       })
       .then((data) => {
-        const albums1 = data.body.tracks;
-          res.render("Protected/search", {
+        const albums1 = data.body.tracks || [];
+          res.render("Protected/search", { 
             albums: albums1,
             publications: user.publications,
+            
           });
         })
         .catch((err) => {
           console.log(err);
-        const albums1 = data.body.tracks;
+          const albums1 = [];
           res.render("Protected/search", {
             albums: albums1,
             publications: user.publications,

@@ -17,7 +17,23 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true,
+    
   },
+  genres: {
+    type: [String], 
+    enum: [
+        "rock",
+        "pop",
+        "blues",
+        "hip-hop",
+        "jazz",
+        "reggae",
+        "classical",
+        "electronic"
+    ],
+    required: true
+  },   
+  
   dateOfBirth: {
     type: Date,
     required: false,
@@ -52,20 +68,7 @@ const userSchema = new Schema({
       required: false,
   },
   // mirar bien el type para profilePicture
-  genres: {
-    type: [String], 
-    enum: [
-        'Rock',
-        'Pop',
-        'Rhythm and blues',
-        'Hip hop',
-        'Jazz',
-        'Reggae',
-        'Classical music',
-        'Others'
-    ],
-    required: true
-}
+
 }); 
 
 const User = model("User", userSchema);
