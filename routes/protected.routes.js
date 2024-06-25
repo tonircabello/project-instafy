@@ -165,5 +165,6 @@ router.get("/publication-details/:id", isLoggedIn, (req, res) => {
       });
     }
   });
+})
 
 module.exports = router;

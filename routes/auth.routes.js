@@ -16,7 +16,7 @@ const saltRounds = 10;
 const User = require("../models/User.model");
 const fileUploader = require('../config/cloudinary.config');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const multer = require('multer');
+// const multer = require('multer');
 
 // Require necessary (isLoggedOut and isLiggedIn) middleware in order to control access to specific routes
 const isLoggedOut = require("../middleware/isLoggedOut");
