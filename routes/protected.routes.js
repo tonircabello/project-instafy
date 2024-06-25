@@ -34,18 +34,26 @@ router.get("/", isLoggedIn, (req, res, next) => {
         })
         .then((data) => {
           const albums1 = data.body.tracks;
-          res.render("Protected/search", {
-            albums: albums1,
-            publications: user.publications,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
+          const otherPublications = [];
+          Publication.find()
+            .populate({ path: "user" })
+            .then((publications) => {
+              publications.forEach((publication) => {
+                if (
+                  publication.user._id.toString() !==
+                  req.session.currentUser._id.toString()
+                ) {
+                  otherPublications.push(publication);
+                }
+              });
+              res.render("Protected/search", {
+                albums: albums1,
+                userPublications: user.publications,
+                otherPublications: otherPublications,
+              });
+            });
         });
-    })
-    .catch((err) =>
-      console.log("The error while searching artists occurred: ", err)
-    );
+    });
 });
 
 router.get("/artist-search", isLoggedIn, (req, res) => {
@@ -100,7 +108,6 @@ router.post("/create-publication", isLoggedIn, (req, res) => {
     aboutType: req.body.aboutType,
     user: req.session.currentUser,
   };
-  console.log(req.body);
   Publication.create(newPublication).then((data) => {
     User.findById(req.session.currentUser._id).then((user) => {
       user.publications.push(data);

@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
     const artistsSearched = document.getElementById("search");
     const formSelect = document.getElementById("publication");
-    const aboutType = document.getElementById("aboutType")
+    const aboutType = document.getElementById("aboutType");
     const optionSelected = document.getElementById("optionSelected").value;
     const option = document.getElementById("option").value;
     if (optionSelected === "Ar") {
