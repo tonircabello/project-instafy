@@ -108,7 +108,7 @@ router.get("/tracks/:albumId", isLoggedIn, (req, res) => {
 })});
 
 router.get("/create-publication", isLoggedIn, (req, res) => {
-  res.render("Protected/create-publication.hbs");
+  User.findById(req.session.currentUser._id).then((user) => { res.render("Protected/create-publication.hbs", {user})});
 });
 router.get("/userProfile", isLoggedIn, (req, res) => {
   User.findById(req.session.currentUser._id)
@@ -142,6 +142,7 @@ router.post("/create-publication", isLoggedIn, (req, res) => {
 });
 
 router.get("/publication-details/:id", isLoggedIn, (req, res) => {
+  User.findById(req.session.currentUser._id).then((user) => {
   const publicationId = req.params.id;
   Publication.findById(publicationId).then((publication) => {
     if (publication.aboutType === "Ar") {
@@ -149,6 +150,7 @@ router.get("/publication-details/:id", isLoggedIn, (req, res) => {
         res.render("Protected/publication-details.hbs", {
           publication: publication,
           about: data.body,
+          user: user,
         });
       });
     } else if (publication.aboutType === "Al") {
@@ -156,6 +158,7 @@ router.get("/publication-details/:id", isLoggedIn, (req, res) => {
         res.render("Protected/publication-details.hbs", {
           publication: publication,
           about: data.body,
+          user: user,
         });
       });
     } else if (publication.aboutType === "Tr") {
@@ -163,9 +166,10 @@ router.get("/publication-details/:id", isLoggedIn, (req, res) => {
         res.render("Protected/publication-song-details", {
           publication: publication,
           about: data.body,
+          user: user,
         });
       });
     }
   });
-});
+})});
 module.exports = router;
