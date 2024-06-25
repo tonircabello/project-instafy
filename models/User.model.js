@@ -17,7 +17,23 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true,
+    
   },
+  genres: {
+    type: [String], 
+    enum: [
+        "rock",
+        "pop",
+        "blues",
+        "hip-hop",
+        "jazz",
+        "reggae",
+        "classical",
+        "electronic"
+    ],
+    required: true
+  },   
+  
   dateOfBirth: {
     type: Date,
     required: false,
@@ -51,8 +67,10 @@ const userSchema = new Schema({
       type: [{type: [Schema.Types.ObjectId], ref: "User"}],
       required: false,
   },
-  }
-);
+  // mirar bien el type para profilePicture
+
+}); 
+
 const User = model("User", userSchema);
 
 module.exports = User;
