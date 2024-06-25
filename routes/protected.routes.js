@@ -37,16 +37,12 @@ router.get("/", isLoggedIn, (req, res, next) => {
           res.render("Protected/search", {
             albums: albums1,
             publications: user.publications,
-            profilePicture: user.profilePicture, 
+            profilePicture: user.profilePicture,
+            user: user,
           });
         })
         .catch((err) => {
           console.log(err);
-          res.render("Protected/search", {
-            albums: [],
-            publications: user.publications,
-            profilePicture: user.profilePicture, 
-          });
         });
     })
     .catch((err) =>
@@ -55,43 +51,61 @@ router.get("/", isLoggedIn, (req, res, next) => {
 });
 
 router.get("/artist-search", isLoggedIn, (req, res) => {
-  const search = req.query.artist;
-  spotifyApi
-    .searchArtists(search)
-    .then((data) => {
-      console.log(data.body.artists.items);
-      res.render("Protected/artists.hbs", { artists: data.body.artists.items });
-    })
-    .catch((err) =>
-      console.log("The error while searching artists occurred: ", err)
-    );
+  User.findById(req.session.currentUser._id).then((user) => {
+    const search = req.query.artist;
+    spotifyApi
+      .searchArtists(search)
+      .then((data) => {
+        console.log(data.body.artists.items);
+        res.render("Protected/artists.hbs", {
+          artists: data.body.artists.items,
+          user: user,
+        });
+      })
+      .catch((err) =>
+        console.log("The error while searching artists occurred: ", err)
+      );
+  });
+  // const search = req.query.artist;
+  // spotifyApi
+  //   .searchArtists(search)
+  //   .then((data) => {
+  //     console.log(data.body.artists.items);
+  //     res.render("Protected/artists.hbs", { artists: data.body.artists.items });
+  //   })
+  //   .catch((err) =>
+  //     console.log("The error while searching artists occurred: ", err)
+  //   );
 });
 
 router.get("/albums/:artistId", isLoggedIn, (req, res) => {
-  const artistId = req.params.artistId;
-  spotifyApi
-    .getArtistAlbums(artistId)
-    .then((data) => {
-      const albums = data.body.items;
-      res.render("Protected/albums.hbs", { artistId, albums });
-    })
-    .catch((err) =>
-      console.log("The error while searching albums occurred: ", err)
-    );
+  User.findById(req.session.currentUser._id).then((user) => {
+    const artistId = req.params.artistId;
+    spotifyApi
+      .getArtistAlbums(artistId)
+      .then((data) => {
+        const albums = data.body.items;
+        res.render("Protected/albums.hbs", { artistId, albums,user:user });
+      })
+      .catch((err) =>
+        console.log("The error while searching albums occurred: ", err)
+      );
+  });
 });
 
 router.get("/tracks/:albumId", isLoggedIn, (req, res) => {
+  User.findById(req.session.currentUser._id).then((user) => {
   const albumId = req.params.albumId;
   spotifyApi
     .getAlbumTracks(albumId)
     .then((data) => {
       const tracks = data.body.items;
-      res.render("Protected/tracks.hbs", { tracks });
+      res.render("Protected/tracks.hbs", { tracks,user:user });
     })
     .catch((err) =>
       console.log("The error while searching tracks occurred: ", err)
     );
-});
+})});
 
 router.get("/create-publication", isLoggedIn, (req, res) => {
   res.render("Protected/create-publication.hbs");
@@ -106,7 +120,6 @@ router.get("/userProfile", isLoggedIn, (req, res) => {
       res.status(500).send("Error fetching user profile.");
     });
 });
-
 
 router.post("/create-publication", isLoggedIn, (req, res) => {
   const newPublication = {
