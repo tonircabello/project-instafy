@@ -37,10 +37,16 @@ router.get("/", isLoggedIn, (req, res, next) => {
           res.render("Protected/search", {
             albums: albums1,
             publications: user.publications,
+            profilePicture: user.profilePicture, 
           });
         })
         .catch((err) => {
           console.log(err);
+          res.render("Protected/search", {
+            albums: [],
+            publications: user.publications,
+            profilePicture: user.profilePicture, 
+          });
         });
     })
     .catch((err) =>
@@ -90,6 +96,17 @@ router.get("/tracks/:albumId", isLoggedIn, (req, res) => {
 router.get("/create-publication", isLoggedIn, (req, res) => {
   res.render("Protected/create-publication.hbs");
 });
+router.get("/userProfile", isLoggedIn, (req, res) => {
+  User.findById(req.session.currentUser._id)
+    .then((user) => {
+      res.render("Protected/UserProfile.hbs", { user });
+    })
+    .catch((error) => {
+      console.error("Error fetching user:", error);
+      res.status(500).send("Error fetching user profile.");
+    });
+});
+
 
 router.post("/create-publication", isLoggedIn, (req, res) => {
   const newPublication = {

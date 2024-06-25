@@ -109,12 +109,23 @@
             aria-current="page"
           >Home</a>
         </li>
-        <li>
-          <a
-            href="#"
-            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-green-700 md:p-0 md:dark:hover:text-green-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-          >Profile</a>
-        </li>
+<li>
+{{#if user.profilePicture}}
+  <a href="/UserProfile" class="block">
+    <img
+      src="{{user.profilePicture}}"
+      alt="Profile Image"
+      class="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover hover:opacity-75"
+    />
+  </a>
+{{else}}
+  <a href="/UserProfile" class="block">
+    <svg class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400 p-2" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M10 0a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 16v-1a3 3 0 1 0-2 0v1a5 5 0 1 1 2 0z" clip-rule="evenodd" />
+    </svg>
+  </a>
+{{/if}}
+</li>
         <li>
           <a
             href="/auth/logout"
