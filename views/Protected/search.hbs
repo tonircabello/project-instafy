@@ -1,7 +1,8 @@
 
-  {{>navbar}}
-  <div class="gap-1 flex">
+{{>navbar}}
+<div class="gap-1 flex">
     <div class="flex-1 border-2 border-gray-600 ">
+
       <h3 class="text-xl font-bold text-violet-700 dark:text-white text-center">Your Publications:</h3>
       <a href="/create-publication"
         class="mt-4 relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800">
@@ -54,11 +55,12 @@
                 <h5
                 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white"
                 >{{album.name}}</h5>
-                <a href="/albums/{{id}}" class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800">
+                <a  href="/tracks/{{album.id}} class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800">
                 <span
                     class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
-                >View Albums</a>
+                >View Tracks</a>
             </div>
+
                 </div>
             {{/if}}
         {{/each}}

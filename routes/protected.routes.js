@@ -7,6 +7,7 @@ const Publication = require("../models/Publication.model");
 const isLoggedOut = require("../middleware/isLoggedOut");
 const isLoggedIn = require("../middleware/isLoggedIn");
 
+
 // setting the spotify-api goes here:
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.CLIENT_ID,
@@ -26,11 +27,20 @@ router.get("/", isLoggedIn, (req, res, next) => {
   User.findById(req.session.currentUser._id)
     .populate({ path: "publications" })
     .then((user) => {
-      spotifyApi
-        .getRecommendations({
-          seed_genres: ["pop", "rock"],
-          min_popularity: 50,
-          limit: 20,
+      const userGenres = user.genres;
+      const seedGenres = userGenres.length > 0 ? userGenres : ["reggae"];
+      spotifyApi.getRecommendations({
+        seed_genres: seedGenres, 
+        min_popularity: 50,
+        limit: 20 
+      })
+      .then((data) => {
+        const albums1 = data.body.tracks || [];
+          res.render("Protected/search", { 
+            albums: albums1,
+            publications: user.publications,
+            
+          });
         })
         .then((data) => {
           const albums1 = data.body.tracks;
@@ -50,8 +60,10 @@ router.get("/", isLoggedIn, (req, res, next) => {
                 albums: albums1,
                 userPublications: user.publications,
                 otherPublications: otherPublications,
+                profilePicture: user.profilePicture, 
               });
             });
+
         });
     });
 });
@@ -98,6 +110,17 @@ router.get("/tracks/:albumId", isLoggedIn, (req, res) => {
 router.get("/create-publication", isLoggedIn, (req, res) => {
   res.render("Protected/create-publication.hbs");
 });
+router.get("/userProfile", isLoggedIn, (req, res) => {
+  User.findById(req.session.currentUser._id)
+    .then((user) => {
+      res.render("Protected/UserProfile.hbs", { user });
+    })
+    .catch((error) => {
+      console.error("Error fetching user:", error);
+      res.status(500).send("Error fetching user profile.");
+    });
+});
+
 
 router.post("/create-publication", isLoggedIn, (req, res) => {
   const newPublication = {
@@ -144,5 +167,6 @@ router.get("/publication-details/:id", isLoggedIn, (req, res) => {
       });
     }
   });
-});
+})
+
 module.exports = router;
