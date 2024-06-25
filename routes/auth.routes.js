@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const upload = multer();
+
 // ℹ️ Handles password encryption
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
@@ -25,31 +29,56 @@ router.get("/signup", isLoggedOut, (req, res) => {
 
 // POST /auth/signup
 router.post("/signup", isLoggedOut,fileUploader.single("profilePicture"), (req, res, next) => {
-  const { username, email, password } = req.body;
-
+  const { username, email, password, genres} = req.body;
+  console.log("Body:", req.body);
+  console.log("File:", req.file);
   // Check that username, email, and password are provided
   if (username === "" || email === "" || password === "") {
-    res.status(400).render("auth/signup", {
-      errorMessage:
-        "All fields are mandatory. Please provide your username, email and password.",
+     res.status(400).render("auth/signup", {
+      errorMessage:"All fields are mandatory. Please provide your username, email and password.",
     });
 
     return;
   }
-
   if (password.length < 6) {
-    res.status(400).render("auth/signup", {
+     res.status(400).render("auth/signup", {
       errorMessage: "Your password needs to be at least 6 characters long.",
     });
 
     return;
-
-    
   }
+  if (!genres) {
+    return res.status(400).render("auth/signup", {
+      errorMessage: "Please select at least one genre.",
+    });
+  }
+  if (genres.length > 5) {
+    return res.status(400).render("auth/signup", {
+      errorMessage: "Please select until 5 genres.",
 
+    })};
 
+  let genreList = Array.isArray(genres) ? genres : genres.split(',').map(genre => genre.trim());
+  const allowedGenres = [
+    "rock",
+    "pop",
+    "blues",
+    "hip-hop",
+    "jazz",
+    "reggae",
+    "classical",
+    "electronic"
+  ];
+  const invalidGenres = genreList.filter(genre => !allowedGenres.includes(genre));
+  if (invalidGenres.length > 0 ) {
+    return res.status(400).render("auth/signup", {
+      errorMessage: `Invalid genre(s): ${invalidGenres.join(', ')}. Please select valid genres.`,
+    });
+  }
+  
+/*
   //   ! This regular expression checks password for special characters and minimum length
-  /*
+  
   const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
   if (!regex.test(password)) {
     res
@@ -62,6 +91,7 @@ router.post("/signup", isLoggedOut,fileUploader.single("profilePicture"), (req, 
   */
 
   // Create a new user - start by hashing the password
+
   bcrypt
     .genSalt(saltRounds)
     .then((salt) => bcrypt.hash(password, salt))
@@ -71,6 +101,7 @@ router.post("/signup", isLoggedOut,fileUploader.single("profilePicture"), (req, 
         username,
         email,
         profilePicture: req.file.path, 
+      genres,
         password: hashedPassword
       });;
     })
@@ -90,7 +121,6 @@ router.post("/signup", isLoggedOut,fileUploader.single("profilePicture"), (req, 
       }
     });
 });
-
 // GET /auth/login
 router.get("/login", isLoggedOut, (req, res) => {
   res.render("auth/login");
