@@ -50,6 +50,12 @@ router.post("/signup", isLoggedOut,fileUploader.single("profilePicture"), (req, 
       errorMessage: "Please select at least one genre.",
     });
   }
+  if (genres.length > 5) {
+    return res.status(400).render("auth/signup", {
+      errorMessage: "Please select until 5 genres.",
+
+    })};
+
   let genreList = Array.isArray(genres) ? genres : genres.split(',').map(genre => genre.trim());
   const allowedGenres = [
     "rock",
@@ -62,7 +68,7 @@ router.post("/signup", isLoggedOut,fileUploader.single("profilePicture"), (req, 
     "electronic"
   ];
   const invalidGenres = genreList.filter(genre => !allowedGenres.includes(genre));
-  if (invalidGenres.length > 0) {
+  if (invalidGenres.length > 0 ) {
     return res.status(400).render("auth/signup", {
       errorMessage: `Invalid genre(s): ${invalidGenres.join(', ')}. Please select valid genres.`,
     });
