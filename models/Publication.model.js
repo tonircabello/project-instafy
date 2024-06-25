@@ -21,6 +21,10 @@ const publicationSchema = new Schema(
         trim: true,
       }
     ],
+    aboutType:{
+      type:String,
+      enum: ['Al', 'Tr', 'Ar'],
+    },
     about:{
       type:String,
       required: false,

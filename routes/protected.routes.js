@@ -48,17 +48,22 @@ router.get("/", isLoggedIn, (req, res, next) => {
           res.render("Protected/search", {
             albums: albums1,
             publications: user.publications,
+            profilePicture: user.profilePicture, 
           });
         })
         .catch((err) => {
           console.log(err);
+          res.render("Protected/search", {
+            albums: [],
+            publications: user.publications,
+            profilePicture: user.profilePicture, 
+          });
         });
-      })
-      .catch((err) =>
-        console.log("The error while searching artists occurred: ", err)
-      );
-  });
-
+    })
+    .catch((err) =>
+      console.log("The error while searching artists occurred: ", err)
+    );
+});
 
 router.get("/artist-search", isLoggedIn, (req, res) => {
   const search = req.query.artist;
@@ -102,6 +107,17 @@ router.get("/tracks/:albumId", isLoggedIn, (req, res) => {
 router.get("/create-publication", isLoggedIn, (req, res) => {
   res.render("Protected/create-publication.hbs");
 });
+router.get("/userProfile", isLoggedIn, (req, res) => {
+  User.findById(req.session.currentUser._id)
+    .then((user) => {
+      res.render("Protected/UserProfile.hbs", { user });
+    })
+    .catch((error) => {
+      console.error("Error fetching user:", error);
+      res.status(500).send("Error fetching user profile.");
+    });
+});
+
 
 router.post("/create-publication", isLoggedIn, (req, res) => {
   const newPublication = {
@@ -109,9 +125,10 @@ router.post("/create-publication", isLoggedIn, (req, res) => {
     content: req.body.content,
     tags: req.body.tags,
     about: req.body.about,
+    aboutType: req.body.aboutType,
     user: req.session.currentUser,
   };
-
+  console.log(req.body);
   Publication.create(newPublication).then((data) => {
     User.findById(req.session.currentUser._id).then((user) => {
       user.publications.push(data);
@@ -122,16 +139,31 @@ router.post("/create-publication", isLoggedIn, (req, res) => {
   });
 });
 
-
 router.get("/publication-details/:id", isLoggedIn, (req, res) => {
   const publicationId = req.params.id;
   Publication.findById(publicationId).then((publication) => {
-    console.log(publication);
-    res.render("Protected/publication-details.hbs", {publication: publication });
+    if (publication.aboutType === "Ar") {
+      spotifyApi.getArtist(publication.about).then((data) => {
+        res.render("Protected/publication-details.hbs", {
+          publication: publication,
+          about: data.body,
+        });
+      });
+    } else if (publication.aboutType === "Al") {
+      spotifyApi.getAlbum(publication.about).then((data) => {
+        res.render("Protected/publication-details.hbs", {
+          publication: publication,
+          about: data.body,
+        });
+      });
+    } else if (publication.aboutType === "Tr") {
+      spotifyApi.getTrack(publication.about).then((data) => {
+        res.render("Protected/publication-song-details", {
+          publication: publication,
+          about: data.body,
+        });
+      });
+    }
   });
-});
-
-
-
 
 module.exports = router;

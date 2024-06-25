@@ -15,6 +15,8 @@ const saltRounds = 10;
 // Require the User model in order to interact with the database
 const User = require("../models/User.model");
 const fileUploader = require('../config/cloudinary.config');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const multer = require('multer');
 
 // Require necessary (isLoggedOut and isLiggedIn) middleware in order to control access to specific routes
 const isLoggedOut = require("../middleware/isLoggedOut");
@@ -89,30 +91,35 @@ router.post("/signup", isLoggedOut,fileUploader.single("profilePicture"), (req, 
   */
 
   // Create a new user - start by hashing the password
-bcrypt
-  .genSalt(saltRounds)
-  .then((salt) => bcrypt.hash(password, salt))
-  .then((hashedPassword) => {
-    
-    return User.create({ username, email, genres, password: hashedPassword });
-  })
-  
-  .then((user) => {
-    console.log("User created:", user); 
-    res.redirect("/auth/login");
-  })
-  .catch((error) => {
-    if (error instanceof mongoose.Error.ValidationError) {
-      res.status(500).render("auth/signup", { errorMessage: error.message });
-    } else if (error.code === 11000) {
-      res.status(500).render("auth/signup", {
-        errorMessage:
-          "Username and email need to be unique. Provide a valid username or email.",
-      });
-    } else {
-      next(error);
-    }
-  });
+
+  bcrypt
+    .genSalt(saltRounds)
+    .then((salt) => bcrypt.hash(password, salt))
+    .then((hashedPassword) => {
+      // Create a user and save it in the database
+    User.create({
+        username,
+        email,
+        profilePicture: req.file.path, 
+      genres,
+        password: hashedPassword
+      });;
+    })
+    .then((user) => {
+      res.redirect("/auth/login");
+    })
+    .catch((error) => {
+      if (error instanceof mongoose.Error.ValidationError) {
+        res.status(500).render("auth/signup", { errorMessage: error.message });
+      } else if (error.code === 11000) {
+        res.status(500).render("auth/signup", {
+          errorMessage:
+            "Username and email need to be unique. Provide a valid username or email.",
+        });
+      } else {
+        next(error);
+      }
+    });
 });
 // GET /auth/login
 router.get("/login", isLoggedOut, (req, res) => {

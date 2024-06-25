@@ -28,7 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
   button.addEventListener("click", function (event) {
     event.preventDefault();
     const artistsSearched = document.getElementById("search");
-    const formSelect = document.getElementById("publication")
+    const formSelect = document.getElementById("publication");
+    const aboutType = document.getElementById("aboutType")
     const optionSelected = document.getElementById("optionSelected").value;
     const option = document.getElementById("option").value;
     if (optionSelected === "Ar") {
@@ -44,9 +45,12 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((data) => {
           artistsSearched.innerHTML = ``;
           formSelect.innerHTML = ``
+          aboutType.innerHTML = ``
+          aboutType.innerHTML += `
+              <option class="text-white" value="Ar">Your publication will be about An artist</option>
+              `;
           for (let i = 0; i < 3; i++) {
             if (data.artists.items[i].images[1].url) {
-              console.log(data.artists.items[i].id);
               artistsSearched.innerHTML += `>
               <div class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mt-2 mb-2">
                   <img class="p-8 rounded-t-lg" src="${data.artists.items[i].images[1].url}" alt="Artist image" />
@@ -58,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
               formSelect.innerHTML += `
               <option class="text-white" value="${data.artists.items[i].id}">${data.artists.items[i].
               name}</option>
-              `
+              `;
             }
           }
         })
@@ -75,6 +79,11 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((data) => {
           artistsSearched.innerHTML = ``;
           formSelect.innerHTML = ``;
+          aboutType.innerHTML = ``
+          aboutType.innerHTML += `
+              <option class="text-white" value="Al">Your publication will be about An album</option>
+              `;
+
           for (let i = 0; i < 3; i++) {
             if (data.albums.items[i].images[1].url) {
               artistsSearched.innerHTML += `>
@@ -105,6 +114,10 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((data) => {
           artistsSearched.innerHTML = ``;
           formSelect.innerHTML = ``
+          aboutType.innerHTML = ``
+          aboutType.innerHTML += `
+              <option class="text-white" value="Tr">Your publication will be about a track</option>
+              `;
           for (let i = 0; i < 3; i++) {
             let id = i 
             if (data.tracks.items[i].album.images[1].url) {
