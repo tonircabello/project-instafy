@@ -34,14 +34,6 @@ router.get("/", isLoggedIn, (req, res, next) => {
         min_popularity: 50,
         limit: 20 
       })
-      .then((data) => {
-        const albums1 = data.body.tracks || [];
-          res.render("Protected/search", { 
-            albums: albums1,
-            publications: user.publications,
-            
-          });
-        })
         .then((data) => {
           const albums1 = data.body.tracks;
           const otherPublications = [];
