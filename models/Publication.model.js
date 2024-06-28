@@ -38,30 +38,10 @@ const publicationSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    likes: {
-      type: Number,
-      default: 0,
-    },
-    comments: [
-      {
-        user: {
-          type: Schema.Types.ObjectId,
-          ref: 'User',
-          required: true,
-        },
-        content: {
-          type: String,
-          required: true,
-        },
-        createdAt: {
-          type: Date,
-          default: Date.now,
-        }
-      }
-    ],
-  },
-  {
-    timestamps: true,
+    publicationImage:{
+      type:String,
+      required:false,
+    }
   }
 );
 
