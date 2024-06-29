@@ -133,8 +133,9 @@ router.post("/create-publication", isLoggedIn,fileUploader.single("publicationIm
     about: req.body.about,
     aboutType: req.body.aboutType,
     user: req.session.currentUser,
-    publicationImage: req.file.path,
+    publicationImage: req.body.publicationImage
   };
+  console.log(newPublication)
   Publication.create(newPublication).then((data) => {
     User.findById(req.session.currentUser._id).then((user) => {
       user.publications.push(data);
