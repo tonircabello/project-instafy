@@ -147,23 +147,4 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
   });
-  const createButton = document.getElementById('button-create');
-  createButton.addEventListener("click", function (event){
-    const image = document.getElementById("image");
-    const optionSelected = document.getElementById("optionSelected").value;
-    const formSelect = document.getElementById("publication");
-    const artistChoosed = formSelect.value  
-    if(optionSelected ==="Ar"){
-        fetch(`https://api.spotify.com/v1/artists/${artistChoosed}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            const publicationImage = `${data.images[1].url}`; 
-             image.value = `${publicationImage}`
-      })
-    }
-  })
 });
