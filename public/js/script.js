@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: `grant_type=client_credentials&client_id=${"d64ddd06cf434e508ad8f6689c54b5bb"}&client_secret=${"5d9f7d1458e647dba256db3c4423d531"}`,
+      body: `grant_type=client_credentials&client_id=${"346dfac3da2c4ab084ebb61b9656912e"}&client_secret=${"950dd655f3c24fdc9fa252ac1a07f2e8"}`,
     })
       .then((response) => response.json())
       .then((data) => {
